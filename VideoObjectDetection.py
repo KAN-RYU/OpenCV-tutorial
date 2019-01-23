@@ -3,7 +3,7 @@ import numpy as np
 
 
 
-cap = cv2.VideoCapture("images/doit.mp4")
+cap = cv2.VideoCapture("images/Circle.mp4")
 
 # 옵션 설명 http://layer0.authentise.com/segment-background-using-computer-vision.html
 fgbg = cv2.createBackgroundSubtractorMOG2(history=500, varThreshold=500, detectShadows=0)
