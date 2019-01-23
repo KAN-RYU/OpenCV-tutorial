@@ -47,11 +47,11 @@ def mouse_callback(event, x, y, flags, param):
             #     print(i-10, i)
         else:
             print("case3")
-            lower_blue1 = np.array([hsv[0], 70, 30])
-            upper_blue1 = np.array([hsv[0]+10, 255, 255])
-            lower_blue2 = np.array([hsv[0]-10, 70, 30])
+            lower_blue1 = np.array([hsv[0], 30, 30])
+            upper_blue1 = np.array([hsv[0]+3, 255, 255])
+            lower_blue2 = np.array([hsv[0]-3, 30, 30])
             upper_blue2 = np.array([hsv[0], 255, 255])
-            lower_blue3 = np.array([hsv[0]-10, 70, 30])
+            lower_blue3 = np.array([hsv[0]-3, 30, 30])
             upper_blue3 = np.array([hsv[0], 255, 255])
             #     print(i, i+10)
             #     print(i-10, i)
@@ -65,10 +65,10 @@ def mouse_callback(event, x, y, flags, param):
 cv.namedWindow('img_color')
 cv.setMouseCallback('img_color', mouse_callback)
 
+cap = cv.VideoCapture('images/doit.mp4') #비디오를 불러오기
 
-
-while(True):
-    img_color = cv.imread('images/test.jpg')
+while(cap.isOpened()):
+    ret, img_color = cap.read()
     height, width = img_color.shape[:2]
     img_color = cv.resize(img_color, (width, height), interpolation=cv.INTER_AREA)
 
@@ -85,15 +85,20 @@ while(True):
 
     # 마스크 이미지로 원본 이미지에서 범위값에 해당되는 영상 부분을 획득합니다.
     img_result = cv.bitwise_and(img_color, img_color, mask=img_mask)
+    img_bgra = cv.cvtColor(img_result, cv.COLOR_RGB2RGBA)
+    print(img_bgra)
+    al = np.ones((height, width), dtype=np.uint8) * 50
 
+    img_bgra[:, :, 3] = al
+    cv.rectangle(img_bgra, (0,0), (100,100), (0,0,255,0.1), -1)
 
     cv.imshow('img_color', img_color)
     cv.imshow('img_mask', img_mask)
-    cv.imshow('img_result', img_result)
+    cv.imshow('img_result', img_bgra)
 
 
     # ESC 키누르면 종료
-    if cv.waitKey(1) & 0xFF == 27:
+    if cv.waitKey(25) & 0xFF == 27:
         break
 
 
