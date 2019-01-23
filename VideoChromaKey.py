@@ -47,9 +47,9 @@ def mouse_callback(event, x, y, flags, param):
             #     print(i-10, i)
         else:
             print("case3")
-            lower_blue1 = np.array([hsv[0], 30, 30])
+            lower_blue1 = np.array([hsv[0], 0, 30])
             upper_blue1 = np.array([hsv[0]+3, 255, 255])
-            lower_blue2 = np.array([hsv[0]-3, 30, 30])
+            lower_blue2 = np.array([hsv[0]-3, 0, 30])
             upper_blue2 = np.array([hsv[0], 255, 255])
             lower_blue3 = np.array([hsv[0]-3, 30, 30])
             upper_blue3 = np.array([hsv[0], 255, 255])
@@ -80,25 +80,22 @@ while(cap.isOpened()):
     img_mask2 = cv.inRange(img_hsv, lower_blue2, upper_blue2)
     img_mask3 = cv.inRange(img_hsv, lower_blue3, upper_blue3)
     img_mask = img_mask1 | img_mask2 | img_mask3
+    
     img_mask = cv.bitwise_not(img_mask)
-
-
-    # 마스크 이미지로 원본 이미지에서 범위값에 해당되는 영상 부분을 획득합니다.
-    img_result = cv.bitwise_and(img_color, img_color, mask=img_mask)
-    img_bgra = cv.cvtColor(img_result, cv.COLOR_RGB2RGBA)
-    print(img_bgra)
-    al = np.ones((height, width), dtype=np.uint8) * 50
-
-    img_bgra[:, :, 3] = al
-    cv.rectangle(img_bgra, (0,0), (100,100), (0,0,255,0.1), -1)
+    blurred = cv.GaussianBlur(img_mask, (11, 11), 0)
+    blurred1 = cv.cvtColor(blurred, cv.COLOR_GRAY2BGR)
+    blurred1 = blurred1.astype(float)/255
+    img_color1 = img_color.astype(float)
+    img_result = cv.multiply(blurred1, img_color1)
 
     cv.imshow('img_color', img_color)
     cv.imshow('img_mask', img_mask)
-    cv.imshow('img_result', img_bgra)
+    img_result = np.uint8(img_result)
+    cv.imshow('img_result', img_result)
 
 
     # ESC 키누르면 종료
-    if cv.waitKey(25) & 0xFF == 27:
+    if cv.waitKey(1) & 0xFF == 27:
         break
 
 
